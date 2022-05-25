@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+ postgresql11:
+  build: .
+  image: postgres-11
+  volumes:
+      - /d01/volumes/postgres/11:/d01/postgres/11/
+  container_name: postgres-11
+  ports:
+     - "54311:5432"
+
