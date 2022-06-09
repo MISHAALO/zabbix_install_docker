@@ -17,16 +17,17 @@ docker run --name postgres-server -t \
 
 
 docker run --name zabbix-server-pgsql -t \
--e DB_SERVER_HOST="192.168.234.106" \
--e DB_SERVER_PORT="54311" \
--e POSTGRES_USER="zabbix" \
--e POSTGRES_PASSWORD="zabbix" \
--e POSTGRES_DB="zabbix" \
--e ZBX_JAVAGATEWAY="zabbix-java-gateway" \
---network=zabbix-net \
--p 10051:10051 \
---restart unless-stopped \
--d zabbix/zabbix-server-pgsql:ubuntu-5.4-latest
+             -e DB_SERVER_HOST="192.168.234.106" \
+             -e DB_SERVER_PORT="54311" \
+             -e POSTGRES_USER="zabbix" \
+             -e POSTGRES_PASSWORD="zabbix" \
+             -e POSTGRES_DB="zabbix" \
+             -e ZBX_JAVAGATEWAY_ENABLE="true" \
+             -e ZBX_JAVAGATEWAY="zabbix-java-gateway" \
+             --network=zabbix-net \
+             -p 10051:10051 \
+             --restart unless-stopped \
+             -d zabbix/zabbix-server-pgsql:ubuntu-5.4-latest
 
 docker run --name zabbix-web-nginx-pgsql -t \
 -e ZBX_SERVER_HOST="zabbix-server-pgsql" \
