@@ -73,3 +73,26 @@ Hostname=cos7client1
 Timeout=20
 # Вы можете включить в файл конфигурации отдельные файлы или все файлы в каталоге
 Include=/etc/zabbix/zabbix_agentd.d/*.conf
+
+
+
+
+
+Ошибки 
+Zabbix-agent
+Не запускается Zabbix-agent:
+
+- по причине отсутствия компонента zbxpcp.so. О этом можно узнать из лог-файла /var/log/zabbix/zabbix_agentd.log zbxpcp.so является компонентом Performance Co-Pilot (PCP) - инструментария, предназначенный для мониторинга и управления производительностью компьютера (https://pcp.io). zbxpcp.so не поставляется вместе с Zabbix, но его подгрузка включена в файле /etc/resolv.conf/zabbix/zabbix_agentd.d/zbxpcp.conf, строку загрузки можно закомментировать.
+
+
+- listener failed: bind() for [[127.0.0.1]:10051] failed: [13] Permission denied Zabbix Agent stopped.
+
+Это означает, что запуску Zabbix-agent мешает Selinux - компонент CentOS, обеспечивающий принудительный контроль доступа. Его можно отключить до следующей перезагрузки ОС, выполнив команду: setenforce 0, либо отключить на совсем, отредактировав следующий файл: /etc/selinux/config, установив в нем следующий параметр: SELINUX=disabled
+
+
+Другие проблемы с Zabbix-agent:
+
+- Zabbix-agent на клиенте с Windows не может соединиться с Zabbix-сервером. Сообщение в zabbix_agentd.log:"active check configuration update from [192.168.0.11:10051] started to fail (cannot connect to [[192.168.0.11]:10051]: (null))". Если все настройки выполнены верно, но агент все равно не может соединиться с сервером, то скорее всего не добавлены порты 10050 и 10051 в исключение в файерволл на Zabbix-сервере. Для их добавления необходимо выполнить команду: firewall-cmd --add-port={10051/tcp,10050/tcp} --permanent
+
+Другое
+- отсутствуют конфигурационные файлы /etc/nginx/conf.d/zabbix.conf и /etc/php-fpm.d/zabbix.conf. Если отсутствие этих файлов обнаружилось после установки Zabbix, то установку нужно повторить (sudo dnf install zabbix-server-mysql zabbix-web-mysql zabbix-nginx-conf zabbix-agent).
