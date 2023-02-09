@@ -99,5 +99,126 @@ Zabbix-agent
 ==================================
 при установке активные проверки от агента, чтобы отображалось доступным нужно чтобы как минимум 1 пассивная проверка была - замени шаблон с agent active на просто agent и будет гореть "зеленым"
 
+
+НАСТРОЙКА АГЕНТА КОНФИГ
+
+cat /etc/zabbix/zabbix_agent2.conf
+PidFile=/var/run/zabbix/zabbix_agent2.pid
+
+LogFile=/var/log/zabbix/zabbix_agent2.log
+LogFileSize=0
+
+#Plugins.SystemRun.EnableRemoteCommands=1
+
+#Plugins.SystemRun.LogRemoteCommands=1
+
+Server=monitoring.soop.it.mvd.ru
+
+Include=/etc/zabbix/zabbix_agent2.d/*.conf
+
+#ControlSocket=/tmp/agent.sock
+
+ListenPort=10055
+# Allow localtime checks
+AllowKey=system.run[*]
+
 Настройка мониторинга базы
 https://www.zabbix.com/integrations/postgresql
+
+
+sudo nano /etc/zabbix/zabbix_agentd.d/template_db_postgresql.conf
+UserParameter=pgsql.bgwriter[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.bgwriter.sq$
+
+UserParameter=pgsql.connections.sum[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.conn$UserParameter=pgsql.connections[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.connecti$UserParameter=pgsql.connections.prepared[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql$
+
+UserParameter=pgsql.dbstat.sum[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.dbstat.su$
+UserParameter=pgsql.dbstat[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.dbstat.sql"
+
+UserParameter=pgsql.transactions[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.transac$UserParameter=pgsql.config.hash[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.config.h$UserParameter=pgsql.wal.stat[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.wal.stat.sq$
+UserParameter=pgsql.locks[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.locks.sql"
+UserParameter=pgsql.queries[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -v tmax=$6 -f
+"/var/lib/zabbix/postgresql/pgsql.q$
+UserParameter=pgsql.uptime[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.uptime.sql"
+UserParameter=pgsql.cache.hit[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.cache.hit.$
+UserParameter=pgsql.scans[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.scans.sql"
+UserParameter=pgsql.frozenxid[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.frozenxid.$
+
+UserParameter=pgsql.discovery.db[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.discove$
+UserParameter=pgsql.db.size[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -c "SELECT pg_database_size('$6')"
+UserParameter=pgsql.ping[*], pg_isready -h "$1" -p "$2"
+UserParameter=pgsql.ping.time[*], LANG=C.UTF-8 psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f "/var/lib/zabbix/postgresql/pgs$
+UserParameter=pgsql.version[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -c "SELECT version();"
+
+UserParameter=pgsql.replication.count[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -c "SELECT count(*) FROM
+pg_stat_replic$UserParameter=pgsql.replication.recovery_role[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/$UserParameter=pgsql.replication.lag.sec[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.$UserParameter=pgsql.replication.status[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.r$
+UserParameter=pgsql.fanid[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.fanid.sql"
+UserParameter=pgsql.tbfanid[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.tbfanid.sql"
+UserParameter=pgsql.ibdm.aknowledged[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.ibd$UserParameter=pgsql.tbbfanid[*], psql
+-qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.fffanid.sql"UserParameter=pgsql.ibdm.sent[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.ibdmsent.s$
+UserParameter=pgsql.ibdmnew[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.ibdmnew.sql"
+UserParameter=pgsql.tbfanidd[*], psql -qtAX
+postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.tbfanidd.sq$UserParameter=pgsql.guvm[*],
+psql -qtAX postgresql://"$3":"$4"@"$1":"$2"/"$5" -f
+"/var/lib/zabbix/postgresql/pgsql.guvm.sql"
+  cat /var/lib/zabbix/postgresql/pgsql.guvm.sql
+SELECT "count"(*) from fms.tbtask f
+where f.modify_date>current_timestamp - interval '60 minutes'
+and f.processing_status='DONE'
+
+
+
+
+
