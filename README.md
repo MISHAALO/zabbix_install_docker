@@ -98,3 +98,6 @@ Zabbix-agent
 - отсутствуют конфигурационные файлы /etc/nginx/conf.d/zabbix.conf и /etc/php-fpm.d/zabbix.conf. Если отсутствие этих файлов обнаружилось после установки Zabbix, то установку нужно повторить (sudo dnf install zabbix-server-mysql zabbix-web-mysql zabbix-nginx-conf zabbix-agent).
 ==================================
 при установке активные проверки от агента, чтобы отображалось доступным нужно чтобы как минимум 1 пассивная проверка была - замени шаблон с agent active на просто agent и будет гореть "зеленым"
+
+Настройка мониторинга базы
+https://www.zabbix.com/integrations/postgresql
